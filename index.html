@@ -189,7 +189,6 @@
 
             <li><strong>40. <a href="https://www.sync.com" target="_blank">Sync.com</a></strong><br>
                 Sync.comは、エンドツーエンド暗号化を提供し、安全なファイル同期とバックアップが可能なクラウドストレージサービス。特にプライバシー重視のユーザー向け。</li>
-
         </ul>
     </section>
 
@@ -210,4 +209,58 @@
     </footer>
 
 </body>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>クリックゲーム</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f0f8ff;
+    }
+    .game-area {
+      margin-top: 20px;
+    }
+    #score {
+      font-size: 2em;
+      color: #444;
+    }
+    #click-button {
+      padding: 20px 40px;
+      font-size: 1.5em;
+      background: #87cefa;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #click-button:hover {
+      background: #00bfff;
+    }
+  </style>
+</head>
+<body>
+  <h1>クリックゲーム</h1>
+  <p>ルール：ボタンをクリックして点数を稼ごう！</p>
+  <p>何回でも押せるよ。どこまで増やせるかな？</p>
+
+  <div class="game-area">
+    <div id="score">スコア: 0</div>
+    <button id="click-button">クリック！</button>
+  </div>
+
+  <script>
+    let score = 0;
+    const scoreDisplay = document.getElementById('score');
+    const button = document.getElementById('click-button');
+
+    button.addEventListener('click', () => {
+      score++;
+      scoreDisplay.textContent = `スコア: ${score}`;
+    });
+  </script>
+</body>
 </html>
+
