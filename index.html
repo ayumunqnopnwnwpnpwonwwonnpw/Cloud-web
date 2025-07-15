@@ -261,5 +261,136 @@
     });
   </script>
 </body>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>オセロ＆将棋（ルール付き）</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h2 { margin-top: 40px; }
+    table { border-collapse: collapse; margin-bottom: 20px; }
+    td {
+      width: 40px; height: 40px;
+      border: 1px solid #333;
+      text-align: center; font-size: 24px;
+      cursor: pointer;
+    }
+    .shogi td { width: 50px; height: 50px; }
+    .selected { background: yellow; }
+  </style>
+</head>
+<body>
+
+  <!-- オセロ -->
+  <div>
+    <h2>🔵 オセロ（基本ルール対応）</h2>
+    <table id="othello"></table>
+  </div>
+
+  <!-- 将棋 -->
+  <div>
+    <h2>♟️ 簡易将棋（玉・金・移動＆取る）</h2>
+    <table id="shogi" class="shogi"></table>
+    <p>玉と金の対戦。金は縦横斜めに1マス、玉も同様。</p>
+  </div>
+
+  <script>
+  // ---------- オセロ ----------
+  const boardEl = document.getElementById("othello");
+  let oBoard = Array.from({ length: 8 }, () => Array(8).fill(""));
+  let cur = "●";
+  // 初期4石
+  oBoard[3][3] = oBoard[4][4] = "○";
+  oBoard[3][4] = oBoard[4][3] = "●";
+
+  const dirs = [ [-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1] ];
+
+  function renderO() {
+    boardEl.innerHTML = "";
+    for (let i = 0; i < 8; i++) {
+      const tr = document.createElement("tr");
+      for (let j = 0; j < 8; j++) {
+        const td = document.createElement("td");
+        td.textContent = oBoard[i][j];
+        td.addEventListener("click", () => tryPlace(i,j));
+        tr.appendChild(td);
+      }
+      boardEl.appendChild(tr);
+    }
+  }
+
+  function tryPlace(i, j) {
+    if (oBoard[i][j] !== "") return;
+    let toFlip = [];
+    for (let [di,dj] of dirs) {
+      let x = i+di, y = j+dj;
+      let tmp = [];
+      while (x>=0 && x<8 && y>=0 && y<8 && oBoard[x][y] === (cur==="●"?"○":"●")) {
+        tmp.push([x,y]);
+        x+=di; y+=dj;
+      }
+      if (tmp.length > 0 && x>=0 && x<8 && y>=0 && y<8 && oBoard[x][y] === cur) {
+        toFlip = toFlip.concat(tmp);
+      }
+    }
+    if (toFlip.length === 0) return;
+    oBoard[i][j] = cur;
+    toFlip.forEach(([x,y]) => oBoard[x][y] = cur);
+    cur = (cur === "●" ? "○" : "●");
+    renderO();
+  }
+
+  renderO();
+
+  // ---------- 将棋 ----------
+  const sEl = document.getElementById("shogi");
+  let sBoard = Array.from({ length: 9 }, () => Array(9).fill(""));
+  // 玉＝王様 ■、金＝金将 ▲
+  sBoard[4][4] = "王"; sBoard[3][3] = "金";
+
+  let sel = null;
+
+  function renderS() {
+    sEl.innerHTML = "";
+    for (let i = 0; i < 9; i++) {
+      const tr = document.createElement("tr");
+      for (let j = 0; j < 9; j++) {
+        const td = document.createElement("td");
+        td.textContent = sBoard[i][j];
+        if (sel && sel[0] === i && sel[1] === j) td.classList.add("selected");
+        td.addEventListener("click", () => onShogiClick(i, j));
+        tr.appendChild(td);
+      }
+      sEl.appendChild(tr);
+    }
+  }
+
+  function onShogiClick(i, j) {
+    if (!sel) {
+      if (sBoard[i][j] === "王" || sBoard[i][j] === "金") {
+        sel = [i, j];
+        renderS();
+      }
+      return;
+    }
+    const [si, sj] = sel;
+    const piece = sBoard[si][sj];
+    const di = i-si, dj = j-sj;
+    if (Math.max(Math.abs(di),Math.abs(dj)) === 1) {
+      // 移動 or キャプチャ
+      if (sBoard[i][j] === "" || sBoard[i][j] !== piece) {
+        sBoard[i][j] = piece;
+        sBoard[si][sj] = "";
+      }
+    }
+    sel = null;
+    renderS();
+  }
+
+  renderS();
+
+  </script>
+</body>
 </html>
+
 
